@@ -10,8 +10,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-from user import *
-from email_content import *
+from registro import *
+from notificacion import *
 
 if __name__ == '__main__':
-	app.run(port=5000)
+	app.run(host='0.0.0.0',port=5000)

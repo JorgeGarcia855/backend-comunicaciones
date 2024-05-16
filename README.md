@@ -25,3 +25,5 @@ correr proyecto
 ```
 python app.py
 ```
+
+hay que abrir el puerto 5000 TCP/UDP para que este visible a todos los dispostivos en la red

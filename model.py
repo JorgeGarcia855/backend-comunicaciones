@@ -1,54 +1,47 @@
 from app import db, ma
 from marshmallow_sqlalchemy import fields
 
-class User(db.Model):
-	__tablename__ = "user"
-	user_id = db.Column(db.Integer, primary_key=True)
-	username = db.Column(db.Text)
-	password = db.Column(db.Text)
-	citizen_id = db.Column(db.Integer, unique=True)
-	email = db.Column(db.Text)
-	contents = db.relationship("EmailContent", backref="user", lazy="dynamic")
+class Registro(db.Model):
+	__tablename__ = "registro"
+	numero_cedula = db.Column(db.Integer, primary_key=True)
+	notificaciones = db.relationship("Notificacion", backref="registro", lazy="dynamic")
 	
-	def __init__(self, user_id, username, password, citizen_id, email):
-		self.user_id = user_id
-		self.username = username
-		self.password = password
-		self.citizen_id = citizen_id
-		self.email = email
+	def __init__(self, numero_cedula):
+		self.numero_cedula = numero_cedula
 		
-class EmailContent(db.Model):
-	__tablename__ = "email_content"
-	content_id = db.Column(db.Integer, primary_key=True)
-	user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
-	body = db.Column(db.Text)
-	direction = db.Column(db.Text)
-	img_path = db.Column(db.Text)
+		
+class Notificacion(db.Model):
+	__tablename__ = "notificacion"
+	numero_notificacion = db.Column(db.Integer, primary_key=True)
+	numero_cedula = db.Column(db.Integer, db.ForeignKey('registro.numero_cedula'))
+	comentarios = db.Column(db.Text)
+	ruta_fotografia = db.Column(db.Text)
+	coordenadas = db.Column(db.Text)
 	
-	def __init__(self, content_id, user_id, body, direction, img_path):
-		self.content_id = content_id
-		self.user_id = user_id
-		self.body = body
-		self.direction = direction
-		self.img_path = img_path
+	def __init__(self, numero_notificacion, numero_cedula, comentarios, ruta_fotografia, coordenadas):
+		self.numero_notificacion = numero_notificacion
+		self.numero_cedula = numero_cedula
+		self.comentarios = comentarios
+		self.ruta_fotografia = ruta_fotografia
+		self.coordenadas = coordenadas
 	  
-class EmailContentSchema(ma.SQLAlchemyAutoSchema):
+class NotificacionSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
-		model = EmailContent
+		model = Notificacion
 		load_instance = True
 		sqla_session = db.session
 		include_relationships = True
 		include_fk = True
 
-class UserSchema(ma.SQLAlchemyAutoSchema):
+class RegistroSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
-		model = User
+		model = Registro
 		load_instance = True
 		sqla_session = db.session
 		include_relationships = True
-	contents = fields.Nested(EmailContentSchema, many=True)
+	notificaciones = fields.Nested(NotificacionSchema, many=True)
 
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
-content_schema = EmailContentSchema()
-contents_schema = EmailContentSchema(many=True)
+registro_schema = RegistroSchema()
+registros_schema = RegistroSchema(many=True)
+notificacion_schema = NotificacionSchema()
+notificaciones_schema = NotificacionSchema(many=True)
